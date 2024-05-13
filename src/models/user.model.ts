@@ -66,3 +66,4 @@ export interface  message extends Document{
       messages: [messageSchema],
    })
    const Usermodel=(mongoose.models.users as mongoose.Model<user>)|| mongoose.model<user>('User', UserSchema); 
+    export default Usermodel
