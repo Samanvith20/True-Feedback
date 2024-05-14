@@ -1,6 +1,8 @@
-import {resend} from "@lib/resendEmail";
+
 import { ApiResponse } from "@/types/ApiResponse";
-import  {VerificationEmail} from "@/helpers/verifyEmail";
+
+import { resend } from "@/lib/resendEmail";
+import VerificationEmail from "./verifyEmail";
 
 export  const sendVerificationEmail = async (email: string, username: string, otp: string): Promise<ApiResponse> => {
    try {

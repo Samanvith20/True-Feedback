@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import Usermodel from "@/models/user.model";
 
 
-const options: NextAuthOptions = {
+export const authOptions: NextAuthOptions = { 
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -17,6 +17,8 @@ const options: NextAuthOptions = {
         await dbConnect();
         try {
           const { email, password } = credentials;
+          console.log(email, password);
+          
           const user = await Usermodel.findOne({
             $or: [
               { email: email },
@@ -66,8 +68,8 @@ const options: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/sign-in',
+    signIn: '/signin',
   },
 };
 
-export default options;
+
