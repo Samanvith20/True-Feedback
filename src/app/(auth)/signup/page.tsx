@@ -5,16 +5,15 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import {z} from "Zod"
 import { zodResolver } from '@hookform/resolvers/zod';
-
 import { useDebounceCallback } from 'usehooks-ts'
 import { ApiResponse } from "@/types/ApiResponse"
 import { toast } from "@/components/ui/use-toast"
 import { useRouter } from "next/navigation"
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Loader2 } from "lucide-react"
-import Input from "@/components/ui/input"; 
-import Button from "@/components/ui/button";
 import Link from "next/link";
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export default function SignUpForm() {
     const [username, setUsername] = useState('');
@@ -40,11 +39,11 @@ export default function SignUpForm() {
 
     useEffect(() => {
         const checkUsernameUnique = async () => {
-            if (name) {
+            if (username) {
                 setIsCheckingUsername(true);
                 setUsernameMessage(''); // Reset the message
                 try {
-                    const response = await axios.post(`/api/check-username?username=${name}`);
+                    const response = await axios.post(`/api/check-username?username=${username}`);
                     if (response.data.message) {
                         setUsernameMessage(response.data.message);
                     }
@@ -67,7 +66,7 @@ export default function SignUpForm() {
 
         // Call the function
         checkUsernameUnique();
-    }, [name]);
+    }, [username]);
 
     const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
         setIsSubmitting(true);
@@ -174,7 +173,7 @@ export default function SignUpForm() {
                 <div className="text-center mt-4">
                     <p>
                         Already a member?{' '}
-                        <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
+                        <Link href="/signin" className="text-blue-600 hover:text-blue-800">
                             Sign in
                         </Link>
                     </p>
