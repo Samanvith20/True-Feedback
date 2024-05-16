@@ -4,8 +4,7 @@ import dbConnect from "@/lib/Database";
 import bcrypt from "bcrypt";
 import Usermodel from "@/models/user.model";
 
-
-export const authOptions: NextAuthOptions = { 
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -13,30 +12,36 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "text", placeholder: "Please Enter Your Email" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials: any): Promise<any> {
+      async authorize(credentials: Record<string, string> | undefined): Promise<any> {
         await dbConnect();
         try {
-          const { email, password } = credentials;
-          console.log(email, password);
+          if (!credentials) {
+            throw new Error("Credentials are missing");
+          }
           
+
           const user = await Usermodel.findOne({
             $or: [
-              { email: email },
-              { username: email },
+              { email: credentials.identifier },
+              { username: credentials.identifier},
             ],
           });
+          console.log(credentials.identifier)
+          
+
           if (!user) {
             throw new Error("No user found");
           }
           if (!user.isVerified) {
             throw new Error("User is not verified");
           }
-          const isPasswordCorrect = await bcrypt.compare(password, user.password);
+          const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
           if (!isPasswordCorrect) {
             throw new Error("Password is incorrect");
           }
           return user;
         } catch (error: any) {
+          console.error("Error in authorize function:", error);
           throw new Error(error.message);
         }
       },
@@ -62,7 +67,6 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-       
   session: {
     strategy: 'jwt',
   },
@@ -71,5 +75,3 @@ export const authOptions: NextAuthOptions = {
     signIn: '/signin',
   },
 };
-
-
