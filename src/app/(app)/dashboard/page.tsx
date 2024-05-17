@@ -1,16 +1,11 @@
 
 'use client';
-
-
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
-
 import { Button } from '@/components/ui/button';
-
 import { useToast } from '@/components/ui/use-toast';
 import { Message } from '@/models/user.model';
 import { acceptMessageSchema } from '@/schemas/acceptMessageSchema';
-
 import { ApiResponse } from '@/types/ApiResponse';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios, { AxiosError } from 'axios';
