@@ -3,7 +3,7 @@ import { signUpSchema } from "@/schemas/signUpSchema"
 import axios, { AxiosError } from "axios"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import {z} from "Zod"
+import {z} from "zod"
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDebounceCallback } from 'usehooks-ts'
 import { ApiResponse } from "@/types/ApiResponse"

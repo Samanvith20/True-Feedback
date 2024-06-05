@@ -18,7 +18,7 @@ import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
-import { z } from "Zod";
+import { z } from "zod";
 
 const Verifycode = () => {
   const router = useRouter();
@@ -26,7 +26,7 @@ const Verifycode = () => {
 
   const { toast } = useToast();
 
-  //Zod implementation
+  //zod implementation
   const form = useForm<z.infer<typeof verifySchema>>({
     resolver: zodResolver(verifySchema),
   });
