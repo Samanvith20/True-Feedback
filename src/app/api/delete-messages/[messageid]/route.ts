@@ -11,6 +11,8 @@ export async function DELETE(request:Request,
      await dbConnect();
       try {
         const messageid=params.messageid;
+        console.log(messageid);
+        
          const sessions=  await getServerSession(authOptions)
          const user:User= sessions?.user as User;
    
@@ -20,10 +22,14 @@ export async function DELETE(request:Request,
                   {status: 401}
               )
           }
+          console.log(sessions);
+          
             const deletedMessage=await Usermodel.updateOne(
               {_id: user._id},
               {$pull: {messages: {_id: messageid}}}
            )
+           console.log(deletedMessage);
+           
   
            if(deletedMessage.modifiedCount===0){
                return Response.json(

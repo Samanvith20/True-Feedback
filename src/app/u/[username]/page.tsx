@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -9,7 +8,6 @@ import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CardHeader, CardContent, Card } from '@/components/ui/card';
-import { useCompletion } from 'ai/react';
 import {
   Form,
   FormControl,
@@ -20,7 +18,7 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
-import {z} from "Zod"
+import { z } from 'Zod';
 import { ApiResponse } from '@/types/ApiResponse';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -28,9 +26,8 @@ import { messageSchema } from '@/schemas/messageSchema';
 
 const specialChar = '||';
 
-// The parseStringMessages function is used to split the messageString into an array of messages.
 const parseStringMessages = (messageString: string): string[] => {
-  return messageString.split(specialChar);
+  return messageString.split(specialChar).map(str => str.trim());
 };
 
 const initialMessageString =
@@ -39,16 +36,6 @@ const initialMessageString =
 export default function SendMessage() {
   const params = useParams<{ username: string }>();
   const username = params.username;
-
-  const {
-    complete,
-    completion,
-    isLoading: isSuggestLoading,
-    error,
-  } = useCompletion({
-    api: '/api/suggest-messages',
-    initialCompletion: initialMessageString,
-  });
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -61,6 +48,8 @@ export default function SendMessage() {
   };
 
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestedMessages, setSuggestedMessages] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (data: z.infer<typeof messageSchema>) => {
     setIsLoading(true);
@@ -69,6 +58,8 @@ export default function SendMessage() {
         ...data,
         username,
       });
+      console.log(response);
+      
 
       toast({
         title: response.data.message,
@@ -80,7 +71,7 @@ export default function SendMessage() {
       toast({
         title: 'Error',
         description:
-          axiosError.response?.data.message ?? 'Failed to sent message',
+          axiosError.response?.data.message ?? 'Failed to send message',
         variant: 'destructive',
       });
     } finally {
@@ -90,10 +81,21 @@ export default function SendMessage() {
 
   const fetchSuggestedMessages = async () => {
     try {
-      complete('');
+      const response = await fetch('/api/suggest-messages', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Suggestions:', data.message);
+      setSuggestedMessages(parseStringMessages(data.message));
+      setError(null);
     } catch (error) {
-      console.error('Error fetching messages:', error);
-      // Handle error appropriately
+      console.error('Failed to fetch suggestions:', error);
+      setError('Failed to fetch suggestions');
     }
   };
 
@@ -141,7 +143,7 @@ export default function SendMessage() {
           <Button
             onClick={fetchSuggestedMessages}
             className="my-4"
-            disabled={isSuggestLoading}
+            disabled={isLoading}
           >
             Suggest Messages
           </Button>
@@ -153,9 +155,9 @@ export default function SendMessage() {
           </CardHeader>
           <CardContent className="flex flex-col space-y-4">
             {error ? (
-              <p className="text-red-500">{error.message}</p>
+              <p className="text-red-500">{error}</p>
             ) : (
-              parseStringMessages(completion).map((message, index) => (
+              suggestedMessages.map((message, index) => (
                 <Button
                   key={index}
                   variant="outline"

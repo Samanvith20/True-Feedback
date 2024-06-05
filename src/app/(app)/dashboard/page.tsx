@@ -17,8 +17,11 @@ import { useForm } from 'react-hook-form';
 import { MessageCard } from '@/components/Messagecard';
 
 
+
 function UserDashboard() {
   const [messages, setMessages] = useState<Message[]>([]);
+  console.log(messages);
+  
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
 
@@ -63,34 +66,33 @@ function UserDashboard() {
     }
   }, [setValue, toast]);
 
-  const fetchMessages = useCallback(
-    async (refresh: boolean = false) => {
-      setIsLoading(true);
-      setIsSwitchLoading(false);
-      try {
-        const response = await axios.get<ApiResponse>('/api/get-messages');
-        setMessages(response.data.messages || []);
-        if (refresh) {
-          toast({
-            title: 'Refreshed Messages',
-            description: 'Showing latest messages',
-          });
-        }
-      } catch (error) {
-        const axiosError = error as AxiosError<ApiResponse>;
+  const fetchMessages = useCallback(async (refresh: boolean = false) => {
+    setIsLoading(true);
+    setIsSwitchLoading(false);
+    try {
+      const response = await axios.get<ApiResponse>('/api/get-messages');
+      console.log('Messages:', response.data.messages);
+
+      setMessages(response.data.messages || []);
+      if (refresh) {
         toast({
-          title: 'Error',
-          description:
-            axiosError.response?.data.message ?? 'Failed to fetch messages',
-          variant: 'destructive',
+          title: 'Refreshed Messages',
+          description: 'Showing latest messages',
         });
-      } finally {
-        setIsLoading(false);
-        setIsSwitchLoading(false);
       }
-    },
-    [setIsLoading, setMessages, toast]
-  );
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiResponse>;
+      toast({
+        title: 'Error',
+        description:
+          axiosError.response?.data.message ?? 'Failed to fetch messages',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+      setIsSwitchLoading(false);
+    }
+  }, []);
 
   // Fetch initial state from the server
   useEffect(() => {
@@ -187,13 +189,17 @@ function UserDashboard() {
       </Button>
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
         {messages.length > 0 ? (
+           
           messages.map((message, index) => (
+           
+            
             <MessageCard
               key={message._id}
               message={message}
               onMessageDelete={handleDeleteMessage}
             />
           ))
+          
         ) : (
           <p>No messages to display.</p>
         )}
