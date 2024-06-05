@@ -1,5 +1,4 @@
-
-'use client'
+'use client';
 
 import React, { useState } from 'react';
 import axios, { AxiosError } from 'axios';
@@ -34,13 +33,12 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
   const handleDeleteConfirm = async () => {
     try {
       const response = await axios.delete<ApiResponse>(
-        `/api/delete-message/${message._id}`
+        `/api/delete-messages/${message._id}`
       );
       toast({
         title: response.data.message,
       });
       onMessageDelete(message._id);
-
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast({
@@ -49,7 +47,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
           axiosError.response?.data.message ?? 'Failed to delete message',
         variant: 'destructive',
       });
-    } 
+    }
   };
 
   return (
@@ -59,7 +57,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
           <CardTitle>{message.content}</CardTitle>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant='destructive'>
+              <Button variant="destructive">
                 <X className="w-5 h-5" />
               </Button>
             </AlertDialogTrigger>
@@ -72,9 +70,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>
-                  Cancel
-                </AlertDialogCancel>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={handleDeleteConfirm}>
                   Continue
                 </AlertDialogAction>

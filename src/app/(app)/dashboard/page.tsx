@@ -1,5 +1,5 @@
-
 'use client';
+
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
@@ -16,18 +16,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { MessageCard } from '@/components/Messagecard';
 
-
-
 function UserDashboard() {
   const [messages, setMessages] = useState<Message[]>([]);
   console.log(messages);
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
 
   const { toast } = useToast();
 
-   // used to delete a message from the list
   const handleDeleteMessage = (messageId: string) => {
     setMessages(messages.filter((message) => message._id !== messageId));
   };
@@ -38,13 +35,7 @@ function UserDashboard() {
     resolver: zodResolver(acceptMessageSchema),
   });
 
-  //setValue:The setValue function from react-hook-form is used to programmatically set the value of a form field. 
-  //In the code, setValue is used in several places to update the value of acceptMessages:
-
   const { register, watch, setValue } = form;
-
-  // The watch function from react-hook-form is used to monitor specific form field values in real-time.
-  // In the code, watch is used to keep track of the value of the acceptMessages field:
   const acceptMessages = watch('acceptMessages');
 
   const fetchAcceptMessages = useCallback(async () => {
@@ -94,16 +85,13 @@ function UserDashboard() {
     }
   }, []);
 
-  // Fetch initial state from the server
   useEffect(() => {
     if (!session || !session.user) return;
 
     fetchMessages();
-
     fetchAcceptMessages();
   }, [session, setValue, toast, fetchAcceptMessages, fetchMessages]);
 
-  // Handle switch change
   const handleSwitchChange = async () => {
     try {
       const response = await axios.post<ApiResponse>('/api/accept-messages', {
@@ -189,17 +177,13 @@ function UserDashboard() {
       </Button>
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
         {messages.length > 0 ? (
-           
-          messages.map((message, index) => (
-           
-            
+          messages.map((message) => (
             <MessageCard
               key={message._id}
               message={message}
               onMessageDelete={handleDeleteMessage}
             />
           ))
-          
         ) : (
           <p>No messages to display.</p>
         )}
