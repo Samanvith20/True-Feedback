@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm cache clean --force && next build",
+    "preinstall": "npm cache clean --force",
+    "build": " next build",
     "start": "next start",
     "lint": "next lint"
   },
