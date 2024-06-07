@@ -1,8 +1,12 @@
-import { message } from "@/models/user.model";
+import { Message } from "@/models/user.model";
 
 export interface ApiResponse{
   success:boolean,
   message:string,
   isAcceptingMessages?: boolean;
-  messages?: Array<message>
+  messages?: Array<Message>
+}
+interface message {
+  _id: string;
+  // other properties...
 }
